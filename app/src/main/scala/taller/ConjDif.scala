@@ -25,4 +25,12 @@ class ConjDif{
     inclusion(cd1,cd2) && inclusion(cd2,cd1)
   }
 
+  def union(cd1: ConjDifuso, cd2: ConjDifuso): ConjDifuso = {
+    (n:Int) => Math.max(cd1(n),cd2(n))
+  }
+
+  def interseccion(cd1: ConjDifuso, cd2: ConjDifuso): ConjDifuso = {
+    (n:Int) => Math.min(cd1(n),cd2(n))
+  }
+
 }
