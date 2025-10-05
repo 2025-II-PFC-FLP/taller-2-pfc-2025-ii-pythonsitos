@@ -117,3 +117,100 @@ cd.igualdad(c1, c3) //false
 | `grande(3,3)`        | `grande(3,3)`        | true      |
 | `constante 0`        | `constante 1`        | false     |
 | `muchoMayorQue(2,3)` | `muchoMayorQue(2,7)` | false     |
+
+----
+
+## 3. `Unión`
+
+```scala
+  def union(cd1: ConjDifuso, cd2: ConjDifuso): ConjDifuso = {
+    (n:Int) => Math.max(cd1(n),cd2(n))
+  }
+```
+Esta función crea un nuevo conjunto difuso que representa la unión de dos conjuntos difusos dados.
+El grado de pertenencia de un elemento en el conjunto resultante se determina tomando el valor máximo entre los grados 
+de pertenencia del elemento en cada uno de los conjuntos originales.
+Matemáticamente, la unión de dos conjuntos difusos A y B se define como:
+$$
+(A \cup B)(x) = \max(A(x), B(x))
+$$
+### Ejemplo de funcionamiento
+#### 1. Se crean los conjuntos 
+```Scala
+val c1: cd.ConjDifuso = cd.muchoMayorQue(2,6)
+val c2: cd.ConjDifuso = cd.grande(2,2)
+```
+#### 2. Se crea el conjunto unión
+```Scala
+val cUnion: cd.ConjDifuso = cd.union(c1, c2)
+```
+#### 3. Evaluación del número
+```Scala
+cUnion(10)
+```
+En este caso se desea comprobar el grado de pertenencia del número **10** en el conjunto unión.             
+#### 4. Retorna grado de pertenencia del número 
+```Scala
+0.6944
+```
+El cual es el resultado de la operación:    
+$$
+\max(muchoMayorQue(2,6)(10), grande(2,2)(10)) = \max(0.2621, 0.6944) = 0.6944
+$$
+### Ejemplo de otros llamados
+| Conjunto A           | Conjunto B           | n   | Resultado aproximado |
+|----------------------|----------------------|-----|--------------------|
+| `muchoMayorQue(2,6)` | `grande(2,2)`        | 1   | 0.1111             |
+| `muchoMayorQue(2,6)` | `grande(2,2)`        | 10  | 0.6944             |
+| `muchoMayorQue(2,6)` | `grande(2,2)`        | 100 | 0.9138             |            
+| `grande(3,3)`        | `grande(1,4)`        | 5   | 0.4823             |
+| `grande(3,3)`        | `grande(1,4)`        | 50  | 0.9035             |
+| `grande(3,3)`        | `grande(1,4)`        | 500 | 0.9831             |
+----
+## 4. `Intersección`
+
+```scala
+  def interseccion(cd1: ConjDifuso, cd2: ConjDifuso): ConjDifuso = {
+    (n:Int) => Math.min(cd1(n),cd2(n))
+  }
+```
+Esta función crea un nuevo conjunto difuso que representa la intersección de dos conjuntos difusos dados.
+El grado de pertenencia de un elemento en el conjunto resultante se determina tomando el valor mínimo entre los grados de pertenencia del elemento en cada uno de los conjuntos originales.
+Matemáticamente, la intersección de dos conjuntos difusos A y B se define como:
+$$
+(A \cap B)(x) = \min(A(x), B(x))
+$$
+### Ejemplo de funcionamiento
+#### 1. Se crean los conjuntos 
+```Scala
+val c1: cd.ConjDifuso = cd.muchoMayorQue(2,6)
+val c2: cd.ConjDifuso = cd.grande(2,2)
+```
+#### 2. Se crea el conjunto intersección
+```Scala
+val cInter: cd.ConjDifuso = cd.interseccion(c1, c2)
+```
+#### 3. Evaluación del número
+```Scala
+cInter(10)
+```
+En este caso se desea comprobar el grado de pertenencia del número **10** en el conjunto intersección.             
+#### 4. Retorna grado de pertenencia del número 
+```Scala
+0.2621
+```
+El cual es el resultado de la operación:    
+$$
+\min(muchoMayorQue(2,6)(10), grande(2,2)(10)) = \min(0.2621, 0.6944) = 0.2621
+$$
+### Ejemplo de otros llamados
+| Conjunto A           | Conjunto B          | n   | Resultado aproximado |
+|----------------------|---------------------|-----|----------------------|
+| `muchoMayorQue(2,6)` | `grande(2,2)`       | 1   | 0.0156               |
+| `muchoMayorQue(2,6)` | `grande(2,2)`       | 10  | 0.2621               |
+| `muchoMayorQue(2,6)` | `grande(2,2)`       | 100 | 0.0833               |            
+| `grande(3,3)`        | `grande(1,4)`       | 5   | 0.0156               |
+| `grande(3,3)`        | `grande(1,4)`       | 50  | 0.4823               |
+| `grande(3,3)`        | `grande(1,4)`       | 500 | 0.6944               |
+
+----
