@@ -28,12 +28,14 @@ class ConjDif{
 
   def inclusion(cd1: ConjDifuso, cd2: ConjDifuso): Boolean = {
     @tailrec
-    def incaux(acc: Int): Boolean ={
+    def incaux(acc: Int): Boolean = {
       if (acc > 1000) true
       else if (cd1(acc) > cd2(acc)) false
-      else incaux(acc+1)
+      else incaux(acc + 1)
     }
+
     incaux(0)
+  }
 
   def igualdad(cd1: ConjDifuso, cd2: ConjDifuso): Boolean = {
     inclusion(cd1,cd2) && inclusion(cd2,cd1)
