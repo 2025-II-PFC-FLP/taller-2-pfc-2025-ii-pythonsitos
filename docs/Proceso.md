@@ -1,129 +1,131 @@
-q
+# Explicacion Matematica del Complemento en Conjuntos Difusos
 
-# Informe de proceso Algoritmo Factorial con Recursión de Cola
+El **complemento** de un conjunto difuso es un conjunto difuso donde la pertenencia de cada elemento es la inversa de su pertenencia original. 
 
-## Definición del Algoritmo
+**Explicación**: 
 
-```Scala
-def factorial(n: Int): BigInt = {
-  @annotation.tailrec
-  def loop(x: Int, acumulador: BigInt): BigInt = {
-    if (x <= 1) acumulador
-    else loop(x - 1, acumulador * x)
-  }
-  loop(n, 1)
-}
-```
-
-- La función `factorial` calcula el factorial de un número `n` utilizando **recursión de cola**.
-- La función interna `loop` es la que hace la recursión:
-  - Recibe dos parámetros:
-    - `x`: el valor actual decreciente hasta llegar a 1.
-    - `acumulador`: donde se guarda el resultado parcial en cada paso.
-
-- El decorador `@annotation.tailrec` obliga a que la función sea optimizada como recursión de cola, es decir, **no se acumulan llamados en la pila**.
-
-## Explicación paso a paso
-
-### Caso base
-
-```Scala
-if (x <= 1) acumulador
-```
-
-Cuando `x` llega a `1`, la función retorna directamente el valor acumulado, evitando más llamadas.
-
-### Caso recursivo
-
-```Scala
-loop(x - 1, acumulador * x)
-```
-
-En cada llamada:
-
-- Se reduce el valor de `x` en 1.
-- Se multiplica el acumulador por `x` y se pasa a la siguiente iteración.
-- Como es recursión de cola, la llamada recursiva es la **última instrucción** en ejecutarse, lo que permite a Scala optimizar la pila.
+Esta operación invierte los valores de pertenencia, de modo que un elemento con un alto grado de pertenencia en un conjunto tendrá un bajo grado en su complemento.
 
 ---
 
-## Llamados de pila en recursión de cola
+## **Definición matemática**
 
-Ejemplo:
+Sea $S \subseteq U$ un conjunto difuso definido sobre un universo finito $U$, con función de pertenencia:
+$$
+\mu_S : U \rightarrow [0,1]
+$$
 
-```Scala
-factorial(5)
-```
+que asigna a cada elemento $x \in U$ un grado de pertenencia $\mu_S(x)$.  
 
-### Paso 1: Llamada inicial
+El **complemento difuso** de $S$, denotado como $\neg S$, se define punto a punto de la siguiente manera:
+$$
+\mu_{\neg S}(x) = 1 - \mu_S(x), \qquad \forall x \in U
+$$
 
-```Scala
-loop(5, 1)
-```
-
-### Paso 2: Primera iteración
-
-```Scala
-loop(4, 5)   // acumulador = 1 * 5
-```
-
-### Paso 3: Segunda iteración
-
-```Scala
-loop(3, 20)  // acumulador = 5 * 4
-```
-
-### Paso 4: Tercera iteración
-
-```Scala
-loop(2, 60)  // acumulador = 20 * 3
-```
-
-### Paso 5: Cuarta iteración
-
-```Scala
-loop(1, 120) // acumulador = 60 * 2
-```
-
-### Paso 6: Caso base
-
-```Scala
-return 120
-```
+De esta forma, si un elemento pertenece a $S$ en un grado alto, su grado de pertenencia al complemento será bajo, y viceversa.
 
 ---
 
-## Diferencia con recursión normal
+## **Demostración de la fórmula del complemento por inducción matemática**
 
-- En **recursión normal** cada llamada queda en la pila esperando a que termine la siguiente, lo que puede causar desbordamiento si `n` es muy grande.
-- En **recursión de cola**, el compilador transforma el proceso en un **bucle optimizado**, por lo que no se guarda cada llamada en la pila y el algoritmo puede ejecutarse para valores muy grandes sin problema.
+Queremos demostrar que para todo conjunto difuso $S \subseteq U$, la función $\mu_{\neg S}(x) = 1 - \mu_S(x)$ cumple que:
+
+$$
+\forall x \in U \; , \; 0 \le \mu_{\neg S}(x) \le 1
+$$
+
+Además se conserva la propiedad de **involución**:
+
+$$
+\neg(\neg S) = S
+$$
+
+### **Caso base $(|U| = 1)$**
+
+Si el universo tiene un solo elemento $x_1$, se cumple que $0 \le \mu_S(x_1) \le 1$.  
+Entonces:
+
+$$
+\mu_{\neg S}(x_1) = 1 - \mu_S(x_1)
+$$
+
+Como $0 \le \mu_S(x_1) \le 1$, se tiene:
+
+$$
+0 \le 1 - \mu_S(x_1) \le 1
+$$
+
+Por lo tanto, la propiedad se cumple para un universo de tamaño 1.  
+Además, si aplicamos nuevamente la operación:
+
+$$
+\mu_{\neg(\neg S)}(x_1) = 1 - \mu_{\neg S}(x_1) = 1 - (1 - \mu_S(x_1)) = \mu_S(x_1)
+$$
+
+por lo que $\neg(\neg S) = S$ en el caso base.
+
+
+
+### **Hipótesis inductiva**
+
+Supongamos que la propiedad se cumple para un conjunto difuso definido sobre un universo de $k$ elementos, es decir:
+
+$$
+0 \le 1 - \mu_S(x_i) \le 1, \qquad \forall i \le k
+$$
+
+y además que se cumple la involución $\neg(\neg S) = S$ para dichos $k$ elementos.
+
+
+
+### **Paso inductivo $(|U| = k + 1)$**
+
+Sea ahora un universo de $k+1$ elementos, es decir $U = \{x_1, x_2, \dots, x_k, x_{k+1}\}$.
+
+Por hipótesis inductiva, la propiedad se cumple para los primeros $k$ elementos.  
+
+Ahora para el nuevo elemento $x_{k+1}$:
+
+$$
+\mu_{\neg S}(x_{k+1}) = 1 - \mu_S(x_{k+1})
+$$
+
+Como $0 \le \mu_S(x_{k+1}) \le 1$, se cumple:
+
+$$
+0 \le 1 - \mu_S(x_{k+1}) \le 1
+$$
+
+Por tanto, la propiedad se cumple también para $x_{k+1}$, y junto con la hipótesis inductiva,  
+se cumple para todo $x \in U$.
+
+De igual forma, aplicando nuevamente el complemento:
+
+$$
+\mu_{\neg(\neg S)}(x_{k+1}) = 1 - \mu_{\neg S}(x_{k+1}) = 1 - (1 - \mu_S(x_{k+1})) = \mu_S(x_{k+1})
+$$
+
+Por lo tanto, la propiedad de involución se mantiene para el caso $k+1$.
 
 ---
 
-## Ejemplo de uso
+### **Conclusión**
 
-```Scala
-val resultado = factorial(5)
-println(resultado)  // 120
-```
+Por el **principio de inducción matemática**,  
+la función $\mu_{\neg S}(x) = 1 - \mu_S(x)$ cumple que:
 
-El resultado de `factorial(5)` es `120`.
+$$
+0 \le \mu_{\neg S}(x) \le 1
+$$
 
-## Diagrama de llamados de pila con recursión de cola
+y que el doble complemento devuelve el conjunto original:
 
-```mermaid
-sequenceDiagram
-    participant Main as factorial(5)
-    participant L1 as loop(5, 1)
-    participant L2 as loop(4, 5)
-    participant L3 as loop(3, 20)
-    participant L4 as loop(2, 60)
-    participant L5 as loop(1, 120)
+$$
+\neg(\neg S) = S
+$$
 
-    Main->>L1: llamada inicial
-    L1->>L2: tail call con (4, 5)
-    L2->>L3: tail call con (3, 20)
-    L3->>L4: tail call con (2, 60)
-    L4->>L5: tail call con (1, 120)
-    L5-->>Main: return 120
-```
+para todo conjunto difuso $S \subseteq U$.
+
+---
+
+
