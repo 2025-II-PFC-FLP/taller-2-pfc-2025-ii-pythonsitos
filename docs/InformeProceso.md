@@ -330,7 +330,8 @@ $$
 La **unión difusa** representa el grado en que un elemento pertenece a al menos uno de los conjuntos difusos considerados.  
 En los conjuntos clásicos, un elemento pertenece a la unión si pertenece a **al menos uno** de los conjuntos.  
 En el contexto difuso, esta idea se generaliza considerando que un elemento puede pertenecer **en cierto grado** a cada conjunto.  
-Por tanto, el grado de pertenencia a la unión se obtiene tomando el **máximo** de ambos valores.            
+Por tanto, el grado de pertenencia a la unión se obtiene tomando el **máximo** de ambos valores.        
+
 ---
 ### **Definición matemática**
 Sean  $A$  y $B$ dos conjuntos difusos definidos sobre el mismo universo $U$, con funciones de pertenencia:
@@ -381,7 +382,7 @@ $$
 \mu_{A \cup B}(x_{k+1}) = \max(\mu_A(x_{k+1}), \mu_B(x_{k+1}))
 $$
 Como por definición $0 \le \mu_A(x_{k+1}) \le 1$ y $0 \le \mu_B(x_{k+1}) \le 1$,  
-su máximo también estará dentro del intervalo $[0,1]$.
+su máximo también estará dentro del intervalo $[0,1]$.  
 Por tanto:
 $$
 0 \le \mu_{A \cup B}(x_{k+1}) \le 1
@@ -550,3 +551,106 @@ $$
 \forall x \in U, \quad 0 \le \mu_{A \cap B}(x) \le 1
 $$
 ---
+
+## 5)`complemento`
+
+Dado un conjunto difuso `c`, `complemento` devuelve el conjunto difuso complementario: la función que para cada elemento `n` da `1 - c(n)`.
+
+**Proceso paso a paso:** 
+
+### 1. Se crea el conjunto difuso c
+
+```scala
+c = grande(2,2)
+```
+
+#### 2. Se crea el conjunto complemento
+```Scala
+val cComp: cd.ConjDifuso = cd.Comp(c)
+```
+
+#### 3. Se evalúa para cada elemento
+```Scala
+def complemento(c: ConjDifuso): ConjDifuso = {
+  (n: Int) => 1 - c(n)
+}
+```
+
+#### 4. Se Se construye el conjunto resultante
+```Scala
+def complemento(c: ConjDifuso): ConjDifuso = {
+  (n: Int) => 1 - c(n)
+}
+```
+
+#### 5. Ejemplo de evaluacion
+```Scala
+cComp(10) // Si c(10) = 0.6944, entonces cComp(10) = 1 - 0.6944 = 0.3056
+
+```
+
+Si el conjunto original para el elemento 10 retorna 0.6944, el complemento retorna 0.3056, mostrando cómo el método transforma el grado de pertenencia de cada elemento.
+
+---
+
+## 6.`inclusion`
+
+### 1. Se define la funcion auxiliar recursiva 
+
+```scala
+@tailrec
+def incaux(acc: Int) : Boolean = {
+  if (acc > 1000) true
+  else if (cd1(acc) > cd2(acc)) false
+  else incaux(acc + 1)
+}
+```
+
+Esta función recursiva verifica si todos los elementos en el rango de 0 a 1000 cumplen la condición de inclusión, es decir, si para cada elemento `n`, el grado de pertenencia en `cd1` es menor o igual que en `cd2`.
+
+### 2. Evaluación de la inclusión elemento por elemento
+
+En cada iteración, se compara el grado de pertenencia de `cd1(acc)` y `cd2(acc)`. Si en algún punto el valor de `cd1(acc)` es mayor que el de `cd2(acc)`, se retorna `false` inmediatamente, indicando que la inclusión no se cumple.
+
+### 3. Continuacion del codigo
+
+Si la condición anterior no se cumple, la función avanza al siguiente elemento `(acc + 1)` y repite el proceso hasta llegar al final del rango.
+
+### 4. Resultado
+Si se recorren todos los elementos sin encontrar ninguna violación, la función retorna true, confirmando que cd1 está incluido en cd2 en el universo discretizado.
+
+### 5. Ejemplo
+```Scala
+val c1: cd.ConjDifuso = cd.muchoMayorQue(2,6)
+val c2: cd.ConjDifuso = cd.grande(2,2)
+cd.inclusion(c1, c2) //false
+```
+
+### 6. Ejemplo tabulado
+
+En cada fila se compara el grado de pertenencia de ambos conjuntos para un valor de `n`, mostrando si se cumple la condición `c1(n) ≤ c2(n)`.
+
+| n  | c1 = muchoMayorQue(2,6)(n) | c2 = grande(2,2)(n) | ¿c1(n) ≤ c2(n)? |
+|----|----------------------------|---------------------|-----------------|
+| 0  | 0.0                        | 0.0                 | Sí              |
+| 1  | 0.0156                     | 0.1111              | Sí              |
+| 2  | 0.0880                     | 0.25                | Sí              |
+| 3  | 0.2222                     | 0.36                | Sí              |
+| 4  | 0.3841                     | 0.4444              | Sí              |
+| 5  | 0.5185                     | 0.5                 | No              |
+
+Como se observa, en las primeras 5 iteraciones la condición de inclusión se cumple, pero en la sexta (n = 5) el valor de c1(5) es mayor que el de c2(5), por lo que el método retorna false y finaliza la evaluación en ese punto.
+
+### Explicación matemática del método `inclusion`
+
+La inclusión de conjuntos difusos se basa en la comparación punto a punto de sus funciones de pertenencia. Dados dos conjuntos difusos $A$ y $B$ definidos sobre el mismo universo $U$, con funciones de pertenencia $\mu_A(x)$ y $\mu_B(x)$, se dice que $A$ está incluido en $B$ ($A \subseteq B$) si y solo si:
+
+$$
+\forall x \in U,\; \mu_A(x) \leq \mu_B(x)
+$$
+
+Esto significa que, para cada elemento $x$ del universo, el grado de pertenencia de $A$ no supera al de $B$. En la práctica computacional, el método recorre un subconjunto finito del universo (por ejemplo, $x = 0$ a $x = 1000$) y verifica la condición anterior para cada valor.
+
+Si existe algún $x$ tal que $\mu_A(x) > \mu_B(x)$, la inclusión no se cumple y el método retorna `false`. Si la condición se cumple para todos los valores, entonces $A$ está incluido en $B$ y el método retorna `true`.
+
+Esta definición extiende el concepto clásico de inclusión de conjuntos al contexto difuso, permitiendo comparar conjuntos cuyos elementos pueden tener grados de pertenencia intermedios entre 0 y 1.
