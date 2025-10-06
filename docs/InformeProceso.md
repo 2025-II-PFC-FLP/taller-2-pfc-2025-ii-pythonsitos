@@ -326,6 +326,76 @@ $$
 | `grande(3,3)`        | `grande(1,4)`        | 50  | 0.9035             |
 | `grande(3,3)`        | `grande(1,4)`        | 500 | 0.9831             |
 ----
+## Explicación matemática de la Unión en conjuntos difusos  
+La **unión difusa** representa el grado en que un elemento pertenece a al menos uno de los conjuntos difusos considerados.  
+En los conjuntos clásicos, un elemento pertenece a la unión si pertenece a **al menos uno** de los conjuntos.  
+En el contexto difuso, esta idea se generaliza considerando que un elemento puede pertenecer **en cierto grado** a cada conjunto.  
+Por tanto, el grado de pertenencia a la unión se obtiene tomando el **máximo** de ambos valores.            
+---
+### **Definición matemática**
+Sean  $A$  y $B$ dos conjuntos difusos definidos sobre el mismo universo $U$, con funciones de pertenencia:
+$$
+\mu_A : U \rightarrow [0,1], \qquad \mu_B : U \rightarrow [0,1]
+$$
+La función de pertenencia de la unión difusa  $A \cup B$ se define punto a punto como:
+$$
+\mu_{A \cup B}(x) = \max(\mu_A(x), \mu_B(x)), \qquad \forall x \in U
+$$
+Esto significa que, para cada elemento $x$, el grado de pertenencia a la unión es el **mayor** de sus grados de pertenencia en $A$ y en $B$.        
+
+---
+### **Demostración de unión por inducción matemática**
+Queremos demostrar que para todo conjunto difuso $A, B \subseteq U$:
+$$
+\forall x \in U,\; 0 \le \mu_{A \cup B}(x) \le 1
+$$
+y que esta definición genera una función de pertenencia válida. 
+### **Caso base $(|U| = 1)$**
+Si el universo tiene un solo elemento $x_1$, sabemos por definición de conjunto difuso que:
+$$      
+0 \le \mu_A(x_1) \le 1 \qquad \text{y} \qquad 0 \le \mu_B(x_1) \le 1
+$$
+Entonces, aplicando la definición de unión:
+$$
+\mu_{A \cup B}(x_1) = \max(\mu_A(x_1), \mu_B(x_1))
+$$
+El máximo de dos números en el intervalo $[0,1]$ también pertenece a $[0,1]$.  
+Por tanto:
+$$
+0 \le \mu_{A \cup B}(x_1) \le 1
+$$
+De esta forma, la propiedad se cumple para un universo de tamaño 1.
+### **Hipótesis inductiva**
+Supongamos que la propiedad es cierta para un universo de tamaño $k$, es decir, para todo $x_i \in U_k$:
+$$
+0 \le \mu_{A \cup B}(x_i) \le 1
+$$
+### **Paso inductivo $(|U| = k + 1)$**
+Sea ahora un universo con un elemento adicional:
+$$
+U_{k+1} = \{x_1, x_2, \dots, x_k, x_{k+1}\}
+$$
+Por hipótesis inductiva, los primeros $k$ elementos cumplen la propiedad.  
+Analicemos el nuevo elemento $x_{k+1}$:
+$$
+\mu_{A \cup B}(x_{k+1}) = \max(\mu_A(x_{k+1}), \mu_B(x_{k+1}))
+$$
+Como por definición $0 \le \mu_A(x_{k+1}) \le 1$ y $0 \le \mu_B(x_{k+1}) \le 1$,  
+su máximo también estará dentro del intervalo $[0,1]$.
+Por tanto:
+$$
+0 \le \mu_{A \cup B}(x_{k+1}) \le 1
+$$
+Así, la propiedad se cumple para el nuevo elemento y, junto con la hipótesis,  
+para todo el universo $U_{k+1}$.
+### **Conclusión**
+Por el **principio de inducción matemática**,la definición de la unión difusa produce una función de pertenencia válida para cualquier universo finito \(U\).
+En consecuencia:
+$$
+\forall x \in U, \quad 0 \le \mu_{A \cup B}(x) \le 1
+$$          
+
+----
 ## 4. `Intersección`
 
 ```scala
