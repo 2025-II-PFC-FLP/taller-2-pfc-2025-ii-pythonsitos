@@ -39,7 +39,7 @@ class InclusionTest extends AnyFunSuite {
 
   test("Un conjunto está incluido en otro si sus valores son menores o iguales") {
     assert(cd.inclusion(cdInter2, cdInter)) // cdInter2(n) <= cdInter(n) para todo n
-    assert(cd.inclusion(cdInter2, cdUno))   // cdInter2(n) <= 1 para todo n
+    assert(!cd.inclusion(cdInter2, cdUno))   // cdInter2(n) > 1 para n > 20, no está incluido
     assert(!cd.inclusion(cdInter, cdInter2)) // cdInter(n) > cdInter2(n) para algunos n
   }
 
